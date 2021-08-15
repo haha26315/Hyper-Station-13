@@ -203,6 +203,7 @@
 	var/mob/living/carbon/human/H = G.owner
 
 	if(H) //if the portal panties are on someone.
+
 		sleeve = mutable_appearance('hyperstation/icons/obj/fleshlight.dmi', "portal_sleeve_normal")
 		if(H.dna.species.name == "Lizardperson") // lizard nerd
 			sleeve = mutable_appearance('hyperstation/icons/obj/fleshlight.dmi', "portal_sleeve_lizard")
@@ -213,15 +214,26 @@
 		if(H.dna.species.name == "Avian") // bird nerd
 			sleeve = mutable_appearance('hyperstation/icons/obj/fleshlight.dmi', "portal_sleeve_avian")
 
-		sleeve.color = "#" + H.dna.features["mcolor"]
-		add_overlay(sleeve)
 
-		if(G.name == "vagina")
-			organ = mutable_appearance('hyperstation/icons/obj/fleshlight.dmi', "portal_vag")
-			organ.color = portalunderwear.loc.color
-		if(G.name == "anus")
-			organ = mutable_appearance('hyperstation/icons/obj/fleshlight.dmi', "portal_anus")
+		if(H.dna.features["genitals_use_skintone"])
+
+			//check for skintones before applying color
+			if(H.dna.species.use_skintones)
+				if(ishuman(H)) // Check before recasting type, although someone fucked up if you're not human AND have use_skintones somehow...
+					sleeve.color = "#[skintone2hex(H.skin_tone)]"
+			else
+				sleeve.color = "#" + H.dna.features["mcolor"]
 			organ.color = "#" + H.dna.features["mcolor"]
+		else
+			if(G.name == "vagina")
+				organ = mutable_appearance('hyperstation/icons/obj/fleshlight.dmi', "portal_vag")
+				organ.color = portalunderwear.loc.color
+			if(G.name == "anus")
+				sleeve.color = "#" + H.dna.features["butt_color"] //update sleeve color if the butt color is different
+				organ = mutable_appearance('hyperstation/icons/obj/fleshlight.dmi', "portal_anus")
+				organ.color = "#" + H.dna.features["butt_color"]
+
+		add_overlay(sleeve)
 
 		useable = TRUE
 		add_overlay(organ)
