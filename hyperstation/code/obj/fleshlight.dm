@@ -189,22 +189,26 @@
 		return
 	..()
 
-/obj/item/portallight/proc/updatesleeve()
+
+//edit to allow for preview generation; pass in a genital object to then attach
+/obj/item/portallight/proc/updatesleeve(obj/item/organ/genital/G)
 	//get their looks and vagina colour!
 	cut_overlays()//remove current overlays
 
-	var/obj/item/organ/genital/G
-	if(istype(portalunderwear.loc, /obj/item/organ/genital)) //Sanity check. Without this it will runtime.
-		G = portalunderwear.loc
+	//check that a genital hasn't already been passed in, runtimes checking portalunderwear.loc otherwise
 	if(!G)
-		useable = FALSE
-		return
+		if(istype(portalunderwear.loc, /obj/item/organ/genital)) //Sanity check. Without this it will runtime.
+			G = portalunderwear.loc
+		if(!G)
+			useable = FALSE
+			return
 
 	var/mob/living/carbon/human/H = G.owner
 
 	if(H) //if the portal panties are on someone.
 
 		sleeve = mutable_appearance('hyperstation/icons/obj/fleshlight.dmi', "portal_sleeve_normal")
+
 		if(H.dna.species.name == "Lizardperson") // lizard nerd
 			sleeve = mutable_appearance('hyperstation/icons/obj/fleshlight.dmi', "portal_sleeve_lizard")
 
@@ -214,29 +218,27 @@
 		if(H.dna.species.name == "Avian") // bird nerd
 			sleeve = mutable_appearance('hyperstation/icons/obj/fleshlight.dmi', "portal_sleeve_avian")
 
+		sleeve.color = "#[H.dna.features["mcolor"]]"
 
 		if(H.dna.features["genitals_use_skintone"])
-
 			//check for skintones before applying color
-			if(H.dna.species.use_skintones)
-				if(ishuman(H)) // Check before recasting type, although someone fucked up if you're not human AND have use_skintones somehow...
-					sleeve.color = "#[skintone2hex(H.skin_tone)]"
+			if(H.dna.species.use_skintones && ishuman(H))
+				sleeve.color = "#[skintone2hex(H.skin_tone)]"
+
+		if(G.name == "vagina")
+			organ = mutable_appearance('hyperstation/icons/obj/fleshlight.dmi', "portal_vag")
+			organ.color = G.color
+		if(G.name == "anus")
+			organ = mutable_appearance('hyperstation/icons/obj/fleshlight.dmi', "portal_anus")
+			if(H.dna.features["genitals_use_skintone"] &&  ishuman(H))
+				organ.color = "#[skintone2hex(H.skin_tone)]"
 			else
-				sleeve.color = "#" + H.dna.features["mcolor"]
-			organ.color = "#" + H.dna.features["mcolor"]
-		else
-			if(G.name == "vagina")
-				organ = mutable_appearance('hyperstation/icons/obj/fleshlight.dmi', "portal_vag")
-				organ.color = portalunderwear.loc.color
-			if(G.name == "anus")
-				sleeve.color = "#" + H.dna.features["butt_color"] //update sleeve color if the butt color is different
-				organ = mutable_appearance('hyperstation/icons/obj/fleshlight.dmi', "portal_anus")
-				organ.color = "#" + H.dna.features["butt_color"]
+				sleeve.color = "#[H.dna.features["butt_color"]]"
+				organ.color = "#[H.dna.features["butt_color"]]"
 
 		add_overlay(sleeve)
-
-		useable = TRUE
 		add_overlay(organ)
+		useable = TRUE
 	else
 		useable = FALSE
 
@@ -260,7 +262,6 @@
 		. += "<span class='notice'>The device is unpaired, to pair, swipe the fleshlight against this pair of portal panties(TM). </span>"
 	else
 		. += "<span class='notice'>The device is paired, and awaiting attachment. </span>"
-
 
 /obj/item/portalpanties/attackby(obj/item/I, mob/living/user) //pairing
 	if(istype(I, /obj/item/portallight))

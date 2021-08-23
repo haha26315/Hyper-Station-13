@@ -2454,13 +2454,11 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 						clientfps = desiredfps
 						parent.fps = desiredfps
 
-//Hyperstation Body Size
-
+				//Hyperstation Body Size
 				if("bodysize")
 					var/new_bodysize = input(user, "Choose your desired sprite size:\n([MIN_BODYSIZE]-[MAX_BODYSIZE]), Warning: May make your character look distorted!\nWill change health pool and speed, while limiting some mechanics (ex: lockers).", "Character Preference") as num|null
 					if (new_bodysize)
 						body_size = max(min( round(text2num(new_bodysize)), MAX_BODYSIZE),MIN_BODYSIZE)
-
 
 
 				if("ui")

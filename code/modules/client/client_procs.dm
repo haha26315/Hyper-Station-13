@@ -933,7 +933,31 @@ GLOBAL_LIST_EMPTY(external_rsc_urls)
 	if(prefs && prefs.chat_toggles & CHAT_PULLR)
 		to_chat(src, announcement)
 
-/client/proc/show_character_previews(mutable_appearance/MA)
+//hyperstation addition! Allow other items to show up on the character preview screen.
+//good for things like portal panties whose appearance is dictated by character settings.
+/client/proc/show_other_previews(mutable_appearance/MAlist[], pos = 4, D = 2)	//pos by 4 by default to prevent overlap with chars, direction south for items
+
+	//initializes list of rendered screens to the same length as what we're rendering
+	if(isnull(other_render_holders) || other_render_holders.len != MAlist.len)
+
+		//quick check that MAlist isn't null before attempting to get its length
+		if(isnull(MAlist))
+			return
+		other_render_holders = new /list(MAlist.len)
+
+	for(var/i = 1, i <= MAlist.len, i++)
+		pos++
+		var/obj/screen/O = other_render_holders[i]
+		if(!O || isnull(O))
+			O = new
+			other_render_holders[i] = O
+			screen |= O
+		O.appearance = MAlist[i]
+		O.dir = D
+		O.screen_loc = "character_preview_map:[pos],0"
+
+
+/client/proc/show_character_previews(mutable_appearance/MA, list/MAlist)
 	var/pos = 0
 	for(var/D in GLOB.cardinals)
 		pos++
@@ -946,15 +970,16 @@ GLOBAL_LIST_EMPTY(external_rsc_urls)
 		O.dir = D
 		O.screen_loc = "character_preview_map:[pos],0"
 
+
 /client/proc/show_character_previews_large(mutable_appearance/MA)
 	var/pos = 0
 	for(var/D in GLOB.cardinals)
 		pos++
 		pos++
-		var/obj/screen/O = LAZYACCESS(char_render_holders, "[D]")
+		var/obj/screen/O = LAZYACCESS(char_render_holders, "char [D]")
 		if(!O)
 			O = new
-			LAZYSET(char_render_holders, "[D]", O)
+			LAZYSET(char_render_holders, "char [D]", O)
 			screen |= O
 		O.appearance = MA
 		O.dir = D

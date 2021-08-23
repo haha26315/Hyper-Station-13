@@ -86,6 +86,8 @@
 
 	var/list/char_render_holders			//Should only be a key-value list of north/south/east/west = obj/screen.
 
+	//hyperstation addition; reduces render time for other previews.
+	var/obj/screen/other_render_holders[]
 
 	var/client_keysend_amount = 0
 	var/next_keysend_reset = 0
