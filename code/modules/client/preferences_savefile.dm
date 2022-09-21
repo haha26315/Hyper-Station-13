@@ -443,7 +443,10 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	S["feature_butt_size"]				>> features["butt_size"]
 	S["feature_butt_color"]				>> features["butt_color"]
 	S["feature_has_anus"]				>> features["has_anus"]
-
+	//lips
+	S["feature_lips_shape"]				>> features["lips_shape"]
+	S["feature_has_lips"]				>> features["has_lips"]
+	S["feature_lips_color"]				>> features["lips_color"]
 	//flavor text
 	//Let's make our players NOT cry desperately as we wipe their savefiles of their special snowflake texts:
 	if((S["flavor_text"] != "") && (S["flavor_text"] != null) && S["flavor_text"]) //If old text isn't null and isn't "" but still exists.
@@ -496,7 +499,11 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	if(!features["wing_color"] || features["wing_color"] == "#000")
 		features["wing_color"] = "FFFFFF"
 
+	if(!features["lip_color"])
+		features["lip_color"] = "FFFFFF"
 
+	if(!features["lips_shape"])
+		features["lips_shape"] = "Average"
 
 	nameless = sanitize_integer(nameless, 0, 1, initial(nameless))
 	be_random_name	= sanitize_integer(be_random_name, 0, 1, initial(be_random_name))
